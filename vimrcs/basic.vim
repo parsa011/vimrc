@@ -384,10 +384,14 @@ function! VisualSelection(direction, extra_filter) range
     let @" = l:saved_reg
 endfunction
 
-" open ctag in tab/vertical split
-map <C-\> :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
-map <leader><C-\> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
+" Leader key
+let mapleader="\<Space>"
 
+" open ctag in tab/vertical split
+nmap gdn  :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
+nmap gd/ :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
+nmap gd- :sp <CR>:exec("tag ".expand("<cword>"))<CR>
+nmap gdd :exec("tag ".expand("<cword>"))<CR>
 
 call plug#begin('~/AppData/Local/nvim/plugged')
   Plug 'preservim/nerdtree'
@@ -396,12 +400,8 @@ call plug#end()
 
 " NerdTree maps
 nnoremap <leader>n :NERDTreeFocus<CR>
-nnoremap <C-n> :NERDTree<CR>
 nnoremap <C-t> :NERDTreeToggle<CR>
 nnoremap <C-f> :NERDTreeFind<CR>	
-
-" Start NERDTree and put the cursor back in the other window.
-autocmd VimEnter * NERDTree | wincmd p
 
 set clipboard=unnamed
 
@@ -507,4 +507,5 @@ ino { {}<left>
 ino {<CR> {<CR>}<ESC>
 
 " close tab 
-nnoremap <c-w> :tabclose
+noremap <c-q> :tabclose<CR>
+noremap <c-n> :tabnew<cr>
