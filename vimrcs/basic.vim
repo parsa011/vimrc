@@ -410,6 +410,23 @@ call plug#begin('~/AppData/Local/nvim/plugged')
   Plug 'junegunn/fzf.vim'
   " Autocompletion
   Plug 'prabirshrestha/asyncomplete.vim'
+  " c
+  Plug 'vim-scripts/c.vim', {'for': ['c', 'cpp']}
+  Plug 'ludwig/split-manpage.vim'
+
+  " typescript
+  Plug 'leafgarland/typescript-vim'
+  Plug 'HerringtonDarkholme/yats.vim'
+
+  " vuejs
+  Plug 'posva/vim-vue'
+  Plug 'leafOfTree/vim-vue-plugin'
+
+  let g:make = 'gmake'
+  if exists('make')
+      let g:make = 'make'
+  endif
+
 call plug#end()
 
 " NerdTree maps
@@ -418,6 +435,55 @@ nnoremap <C-t> :NERDTreeToggle<CR>
 nnoremap <C-f> :NERDTreeFind<CR>	
 
 set clipboard=unnamed
+
+" make/cmake
+augroup vimrc-make-cmake
+    autocmd!
+    autocmd FileType make setlocal noexpandtab
+    autocmd BufNewFile,BufRead CMakeLists.txt setlocal filetype=cmake
+augroup END
+
+" Git
+noremap <Leader>ga :Gwrite<CR>
+noremap <Leader>gc :Git commit --verbose<CR>
+noremap <Leader>gsh :Gpush<CR>
+noremap <Leader>gll :Gpull<CR>
+noremap <Leader>gs :Gstatus<CR>
+noremap <Leader>gb :Gblame<CR>
+noremap <Leader>gd :Gvdiff<CR>
+noremap <Leader>gr :Gremove<CR>
+
+"*****************************************************************************
+"" Custom configs
+"*****************************************************************************
+
+" c
+autocmd FileType c setlocal tabstop=4 shiftwidth=4 expandtab
+autocmd FileType cpp setlocal tabstop=4 shiftwidth=4 expandtab
+
+" javascript
+let g:javascript_enable_domhtmlcss = 1
+
+" vim-javascript
+augroup vimrc-javascript
+    autocmd!
+    autocmd FileType javascript setl tabstop=4|setl shiftwidth=4|setl expandtab softtabstop=4
+augroup END
+
+" typescript
+let g:yats_host_keyword = 1
+
+" vuejs
+" vim vue
+let g:vue_disable_pre_processors=1
+" vim vue plugin
+let g:vim_vue_plugin_load_full_syntax = 1
+
+
+"" fzf.vim
+set wildmode=list:longest,list:full
+set wildignore+=*.o,*.obj,.git,*.rbc,*.pyc,__pycache__
+let $FZF_DEFAULT_COMMAND =  "find * -path '*/\.*' -prune -o -path 'node_modules/**' -prune -o -path 'target/**' -prune -o -path 'dist/**' -prune -o  -type f -print -o -type l -print 2> /dev/null"
 
 " copy and paste
 vmap <C-c> "+yi
@@ -430,6 +496,9 @@ let NERDTreeCustomOpenArgs= {'file': {'reuse':'currenttab', 'where':'p', 'keepop
 
 " Open the existing NERDTree on each new tab.
 autocmd BufWinEnter * if getcmdwintype() == '' | silent NERDTreeMirror | endif
+
+" Close the tab if NERDTree is the only window remaining in it.
+autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
 
 " NerdTree arrows
 let g:NERDTreeDirArrowExpandable = '+'
@@ -446,7 +515,7 @@ noremap <c-left> <c-w>>
 noremap <c-right> <c-w><
 
 " You can split the window in Vim by typing :split or :vsplit.
-" Navigate the split view easier by pressing CTRL+j, CTRL+k, CTRL+h, or CTRL+l.
+" Navigate the split view eier by pressing CTRL+j, CTRL+k, CTRL+h, or CTRL+l.
 nnoremap <c-j> <c-w>j
 nnoremap <c-k> <c-w>k
 nnoremap <c-h> <c-w>h
