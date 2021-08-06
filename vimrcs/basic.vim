@@ -1,4 +1,4 @@
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+ """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Maintainer: 
 "       Amir Salihefendic — @amix3k
 "
@@ -43,7 +43,7 @@ au FocusGained,BufEnter * checktime
 
 " With a map leader it's possible to do extra key combinations
 " like <leader>w saves the current file
-let mapleader = ","
+let mapleader="\\"
 
 " Fast saving
 nmap <leader>w :w!<cr>
@@ -207,7 +207,6 @@ vnoremap <silent> # :<C-u>call VisualSelection('', '')<CR>?<C-R>=@/<CR><CR>
 " => Moving around, tabs, windows and buffers
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Map <Space> to / (search) and Ctrl-<Space> to ? (backwards search)
-map <space> /
 map <C-space> ?
 
 " Disable highlight when <leader><cr> is pressed
@@ -384,8 +383,6 @@ function! VisualSelection(direction, extra_filter) range
     let @" = l:saved_reg
 endfunction
 
-" Leader key
-let mapleader="\<Space>"
 
 " open ctag in tab/vertical split
 nmap gdn  :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
@@ -396,6 +393,23 @@ nmap gdd :exec("tag ".expand("<cword>"))<CR>
 call plug#begin('~/AppData/Local/nvim/plugged')
   Plug 'preservim/nerdtree'
   Plug 'OmniSharp/omnisharp-vim'
+  Plug 'morhetz/gruvbox'
+  Plug 'Xuyuanp/nerdtree-git-plugin'
+  Plug 'OrangeT/vim-csharp', { 'for': ['asp', 'aspx'] }
+  Plug 'scrooloose/nerdcommenter'
+  Plug 'mattn/emmet-vim'
+  Plug 'maksimr/vim-jsbeautify'
+  Plug 'alvan/vim-closetag'
+  Plug 'sgur/vim-editorconfig'
+  " Mappings, code-actions available flag and statusline integration
+  Plug 'nickspoons/vim-sharpenup'
+  " Linting/error highlighting
+  Plug 'dense-analysis/ale'
+  " Vim FZF integration, used as OmniSharp selector
+  Plug 'junegunn/fzf'
+  Plug 'junegunn/fzf.vim'
+  " Autocompletion
+  Plug 'prabirshrestha/asyncomplete.vim'
 call plug#end()
 
 " NerdTree maps
@@ -412,7 +426,14 @@ vmap <C-v> c<ESC>"+p
 imap <C-v> <ESC>"+pa
 
 " Open file in new tab : nerdtree
-let NERDTreeCustomOpenArgs={'file':{'where': 't'}}
+let NERDTreeCustomOpenArgs= {'file': {'reuse':'currenttab', 'where':'p', 'keepopen':1, 'stay':1}}
+
+" Open the existing NERDTree on each new tab.
+autocmd BufWinEnter * if getcmdwintype() == '' | silent NERDTreeMirror | endif
+
+" NerdTree arrows
+let g:NERDTreeDirArrowExpandable = '+'
+let g:NERDTreeDirArrowCollapsible = '-'
 
 " Enable auto completion menu after pressing TAB.
 set wildmenu
@@ -451,7 +472,7 @@ set statusline+=\ ascii:\ %b\ hex:\ 0x%B\ row:\ %l\ col:\ %c\ percent:\ %p%%
 nnoremap <space> :
 
 " Open vertical terminal by meta and t
-nnoremap <m-t> :vert term
+nnoremap <M-t> :vert term
 
 " Tell ALE to use OmniSharp for linting C# files, and no other linters.
 let g:ale_linters = { 'cs': ['OmniSharp'] }
@@ -509,3 +530,179 @@ ino {<CR> {<CR>}<ESC>
 " close tab 
 noremap <c-q> :tabclose<CR>
 noremap <c-n> :tabnew<cr>
+
+" gruvbox theme
+autocmd vimenter * ++nested colorscheme gruvbox
+
+" nerdtree git
+let g:NERDTreeGitStatusIndicatorMapCustom = {
+                \ 'Modified'  :'M',
+                \ 'Staged'    :'+',
+                \ 'Untracked' :'N',
+                \ 'Renamed'   :'R',
+                \ 'Unmerged'  :'═',
+                \ 'Deleted'   :'D',
+                \ 'Dirty'     :'-',
+                \ 'Ignored'   :'☒',
+                \ 'Clean'     :'✔︎',
+                \ 'Unknown'   :'?',
+                \ }
+
+" don't copy deleted text to register
+nnoremap d                "_d
+vnoremap d                "_d
+
+" auto indent after paste
+nnoremap p                p=`]
+nnoremap P                P=`]
+
+
+" maksimr/vim-jsbeautify
+autocmd FileType javascript noremap <buffer> <F4>   :call JsBeautify()<CR>
+autocmd FileType json noremap <buffer> <F4>         :call JsonBeautify()<CR>
+autocmd FileType jsx noremap <buffer> <F4>          :call JsxBeautify()<CR>
+autocmd FileType html noremap <buffer> <F4>         :call HtmlBeautify()<CR>
+autocmd FileType css noremap <buffer> <F4>          :call CSSBeautify()<CR>
+autocmd FileType javascript vnoremap <buffer> <F4>  :call RangeJsBeautify()<CR>
+autocmd FileType json vnoremap <buffer> <F4>        :call RangeJsonBeautify()<CR>
+autocmd FileType jsx vnoremap <buffer> <F4>         :call RangeJsxBeautify()<CR>
+autocmd FileType html vnoremap <buffer> <F4>        :call RangeHtmlBeautify()<CR>
+autocmd FileType css vnoremap <buffer> <F4>         :call RangeCSSBeautify()<CR>
+
+
+" mattn/emmet-vim
+"let g:user_emmet_leader_key='<Tab>'
+let g:user_emmet_settings = {
+  \  'javascript.jsx' : {
+    \  'extends' : 'jsx',
+  \ },
+\ }
+
+" sgur/vim-editorconfig
+let g:editorconfig_blacklist = {
+  \ 'filetype': ['git.*', 'fugitive'],
+  \ 'pattern': ['\.un~$']
+\ }
+
+" update ctags file on file write
+function! DelTagOfFile(file)
+  let fullpath = a:file
+  let cwd = getcwd()
+  let tagfilename = cwd . "/tags"
+  let f = substitute(fullpath, cwd . "/", "", "")
+  let f = escape(f, './')
+  let cmd = 'sed -i "/' . f . '/d" "' . tagfilename . '"'
+  let resp = system(cmd)
+endfunction
+
+function! UpdateTags()
+  let f = expand("%:p")
+  let cwd = getcwd()
+  let tagfilename = cwd . "/tags"
+  let cmd = 'ctags -a -f ' . tagfilename . ' --c++-kinds=+p --fields=+iaS --extra=+q ' . '"' . f . '"'
+  call DelTagOfFile(f)
+  let resp = system(cmd)
+endfunction
+
+autocmd BufWritePost *.c,*.cpp,*.h*.coffee,*.css,*.htm,*.html,*.js,*.less,*.md,*.sass,*.scss,*.ts call UpdateTags()
+
+" Look for updated file on disk
+augroup improved_autoread
+  autocmd!
+  autocmd FocusGained * silent! checktime
+  autocmd BufEnter * silent! checktime
+augroup end
+
+
+" ALE: {{{
+    let g:ale_sign_error = '•'
+    let g:ale_sign_warning = '•'
+    let g:ale_sign_info = '·'
+    let g:ale_sign_style_error = '·'
+    let g:ale_sign_style_warning = '·'
+
+    let g:ale_linters = { 'cs': ['OmniSharp'] }
+" }}}
+
+" Asyncomplete: {{{
+    let g:asyncomplete_auto_popup = 1
+    let g:asyncomplete_auto_completeopt = 1
+" }}}
+
+" Sharpenup: {{{
+    " All sharpenup mappings will begin with `<Space>os`, e.g. `<Space>osgd` for
+    " :OmniSharpGotoDefinition
+    let g:sharpenup_map_prefix = '<Space>os'
+
+    let g:sharpenup_statusline_opts = { 'Text': '%s (%p/%P)' }
+    let g:sharpenup_statusline_opts.Highlight = 0
+
+    augroup OmniSharpIntegrations
+        autocmd!
+        autocmd User OmniSharpProjectUpdated,OmniSharpReady call lightline#update()
+    augroup END
+" }}}
+
+" Lightline: {{{
+    let g:lightline = {
+                \ 'colorscheme': 'gruvbox',
+                \ 'active': {
+        \   'right': [
+            \     ['linter_checking', 'linter_errors', 'linter_warnings', 'linter_infos', 'linter_ok'],
+            \     ['lineinfo'], ['percent'],
+            \     ['fileformat', 'fileencoding', 'filetype', 'sharpenup']
+            \   ]
+            \ },
+            \ 'inactive': {
+            \   'right': [['lineinfo'], ['percent'], ['sharpenup']]
+            \ },
+            \ 'component': {
+                \   'sharpenup': sharpenup#statusline#Build()
+                \ },
+                \ 'component_expand': {
+                    \   'linter_checking': 'lightline#ale#checking',
+                    \   'linter_infos': 'lightline#ale#infos',
+                    \   'linter_warnings': 'lightline#ale#warnings',
+                    \   'linter_errors': 'lightline#ale#errors',
+                    \   'linter_ok': 'lightline#ale#ok'
+                    \  },
+                    \ 'component_type': {
+                    \   'linter_checking': 'right',
+                    \   'linter_infos': 'right',
+                    \   'linter_warnings': 'warning',
+                    \   'linter_errors': 'error',
+                    \   'linter_ok': 'right'
+                    \  }
+                    \}
+    " Use unicode chars for ale indicators in the statusline
+    let g:lightline#ale#indicator_checking = "\uf110 "
+    let g:lightline#ale#indicator_infos = "\uf129 "
+    let g:lightline#ale#indicator_warnings = "\uf071 "
+    let g:lightline#ale#indicator_errors = "\uf05e "
+    let g:lightline#ale#indicator_ok = "\uf00c "
+" }}}   
+
+" OmniSharp: {{{
+   
+    if has('nvim')
+        let g:OmniSharp_popup_options = {
+                    \ 'winhl': 'Normal:NormalFloat'
+                    \}
+    else
+        let g:OmniSharp_popup_options = {
+                    \ 'highlight': 'Normal',
+                    \ 'padding': [0, 0, 0, 0],
+                    \ 'border': [1]
+                    \}
+    endif
+    let g:OmniSharp_popup_mappings = {
+                \ 'sigNext': '<C-n>',
+                \ 'sigPrev': '<C-p>',
+                \ 'pageDown': ['<C-f>', '<PageDown>'],
+                \ 'pageUp': ['<C-b>', '<PageUp>']
+                \}
+
+    let g:OmniSharp_highlight_groups = {
+                \ 'ExcludedCode': 'NonText'
+            \}
+" }}}
