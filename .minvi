@@ -1,0 +1,84 @@
+" No annoying sound on errors
+set noerrorbells
+set novisualbell
+set t_vb=
+set tm=500
+
+" 1 tab == 4 spaces
+set shiftwidth=4
+set tabstop=4
+
+" Makes search act like search in modern browsers
+set incsearch 
+
+" Highlight search results
+set hlsearch
+
+set ai "Auto indent
+set si "Smart indent
+set wrap "Wrap lines
+
+" Smart way to move between windows
+map <C-j> <C-W>j
+map <C-k> <C-W>k
+map <C-h> <C-W>h
+map <C-l> <C-W>l
+
+" Useful mappings for managing tabs
+map <leader>tn :tabnew<cr>
+map <leader>to :tabonly<cr>
+map <leader>tc :tabclose<cr>
+map <leader>tm :tabmove 
+map <leader>t<leader> :tabnext 
+
+" Move a line of text using ALT+[jk] or Command+[jk] on mac
+nmap <M-j> mz:m+<cr>`z
+nmap <M-k> mz:m-2<cr>`z
+vmap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
+vmap <M-k> :m'<-2<cr>`>my`<mzgv`yo`z
+
+" open ctag in tab/vertical split
+nmap gdn  :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
+nmap gd/ :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
+nmap gd- :sp <CR>:exec("tag ".expand("<cword>"))<CR>
+nmap gdd :exec("tag ".expand("<cword>"))<CR>
+
+
+" Enable auto completion menu after pressing TAB.
+set wildmenu
+
+" Resize split windows using arrow keys by pressing:
+" CTRL+UP, CTRL+DOWN, CTRL+LEFT, or CTRL+RIGHT.
+noremap <c-up> <c-w>+
+noremap <c-down> <c-w>-
+noremap <c-left> <c-w>>
+noremap <c-right> <c-w><
+
+" You can split the window in Vim by typing :split or :vsplit.
+" Navigate the split view eier by pressing CTRL+j, CTRL+k, CTRL+h, or CTRL+l.
+nnoremap <c-j> <c-w>j
+nnoremap <c-k> <c-w>k
+nnoremap <c-h> <c-w>h
+nnoremap <c-l> <c-w>l
+
+" Press the space bar to type the : character in command mode.
+noremap <space> :
+
+" close tab 
+noremap <c-q> :tabclose<CR>
+noremap <c-n> :tabnew<cr>
+
+
+" don't copy deleted text to register
+nnoremap d "_d
+vnoremap d "_d
+
+" auto indent after paste
+nnoremap p p=`]
+nnoremap P P=`]
+
+" copy and paste
+vmap <C-c> "+yi
+vmap <C-x> "+c
+vmap <C-v> c<ESC>"+p
+imap <C-v> <ESC>"+pa
