@@ -37,6 +37,8 @@ nmap <M-k> mz:m-2<cr>`z
 vmap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
 vmap <M-k> :m'<-2<cr>`>my`<mzgv`yo`z
 
+vmap <c-m> :make<cr>
+
 " open ctag in tab/vertical split
 nmap gdn  :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
 nmap gd/ :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
@@ -64,8 +66,7 @@ nnoremap <c-l> <c-w>l
 " Press the space bar to type the : character in command mode.
 noremap <space> :
 
-" close tab 
-noremap <c-q> :tabclose<CR>
+" close tab
 noremap <c-n> :tabnew<cr>
 
 
@@ -82,3 +83,22 @@ vmap <C-c> "+yi
 vmap <C-x> "+c
 vmap <C-v> c<ESC>"+p
 imap <C-v> <ESC>"+pa
+
+" Moving between tabs with meta key and arrows
+nnoremap <m-left> gT
+nnoremap <m-right> gt
+
+set nu
+
+call plug#begin('~/.vim/plugged')
+	Plug 'tomasiser/vim-code-dark'
+	Plug 'morhetz/gruvbox'
+	Plug 'ctrlpvim/ctrlp.vim'
+call plug#end()
+
+if executable('rg')
+	let g:ctrlp_user_command = 'rg %s --files --hidden --color=never --glob ""'
+endif
+
+set background=dark
+colorscheme gruvbox 
