@@ -66,6 +66,10 @@ nnoremap <c-l> <c-w>l
 " Press the space bar to type the : character in command mode.
 noremap <space> :
 
+" terminal maps
+nnoremap <leader>tl :below vertical terminal<cr>
+nnoremap <leader>tj :below terminal<cr>
+
 " close tab
 noremap <c-n> :tabnew<cr>
 
