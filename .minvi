@@ -101,7 +101,16 @@ call plug#begin('~/.vim/plugged')
 	Plug 'tomasiser/vim-code-dark'
 	Plug 'morhetz/gruvbox'
 	Plug 'ctrlpvim/ctrlp.vim'
+	Plug 'preservim/nerdtree'
 call plug#end()
+
+" nerd tree configs
+nnoremap <leader>n :NERDTreeFocus<CR>
+nnoremap <C-t> :NERDTreeToggle<CR>
+nnoremap <C-f> :NERDTreeFind<CR>
+
+let g:NERDTreeDirArrowExpandable = '+'
+let g:NERDTreeDirArrowCollapsible = '-'
 
 if executable('rg')
 	let g:ctrlp_user_command = 'rg %s --files --hidden --color=never --glob ""'
