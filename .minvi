@@ -18,6 +18,9 @@ set ai "Auto indent
 set si "Smart indent
 set wrap "Wrap lines
 
+" set leader key to \
+let mapleader = "\\"
+
 " Smart way to move between windows
 map <C-j> <C-W>j
 map <C-k> <C-W>k
